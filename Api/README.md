@@ -1,31 +1,16 @@
 <div align="center">
-	<h1>TerraMoursGpt2</h1>
+	<h1>TerraMours Gpt Api</h1>
 </div>
 
-
-![](https://img.shields.io/github/stars/TerraMours/TerraMoursGpt2) ![](https://img.shields.io/github/forks/TerraMours/TerraMoursGpt2)
+![](https://img.shields.io/github/stars/TerraMours/TerraMours_Gpt_Api) ![](https://img.shields.io/github/forks/TerraMours/TerraMours_Gpt_Api)
 
 中文简介 | [English](README-EN.md)
 
 ## 简介
 
-TerraMoursGpt2 向量数据库+AI大模型 的知识库AI助手平台
+[TerraMours Gpt Api](https://github.com/TerraMours/TerraMours_Gpt_Api) 是基于[TerraMoursFrameWork](https://github.com/TerraMours/TerraMoursFrameWork) 开发完善的智能助手项目。技术包括 Net7+MinimalApi+EF Core+Postgresql+Seq+FluentApi ...... 
 
-
-
-## 已完成模型
-- [X] OpenAI
-- [X] chatGLM
-- [X] 文心千帆
-- [X] 同义千问
-- [X] stable-diffusion
-- [ ] midjourney
-- [X] pinecone
-- [X] pgvector
-
-
-
-
+TerraMours实战项目，实现用户登陆和基于SK的多语言模型聊天、基于chatgpt和SD的多模型图片生成等功能。管理端实现数据看板、聊天记录管理，图片记录管理、用户管理、系统配置等。
 
 官网地址：https://terramours.site/
 
@@ -44,6 +29,8 @@ TerraMoursGpt2 向量数据库+AI大模型 的知识库AI助手平台
 ##### 2.automapper 模型自动映射
 
 ##### 3.对接口统一返回结果中间件ApiResponse{code,message,data}封装
+
+##### 4.Semantic Kernel 调用chatgpt
 
 ##### 5.日志服务Seq
 
