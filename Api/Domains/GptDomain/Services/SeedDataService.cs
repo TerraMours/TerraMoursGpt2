@@ -123,7 +123,7 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
                         });
                         await _dbContext.SysUsers.AddRangeAsync(new[]
                         {
-                    new SysUser("terramours@163.com","terramours@163.com".EncryptDES(_sysSettings.Value.secret.Encrypt)){RoleId=admin.RoleId,Gender="1",Balance = 0,UserName = "terramours"}
+                    new SysUser("terramours@163.com",(Environment.GetEnvironmentVariable("DEFAULT_ROOT_PSW")?? "terramours@163.com").EncryptDES(_sysSettings.Value.secret.Encrypt)){RoleId=admin.RoleId,Gender="1",Balance = 0,UserName = "terramours"}
                 });
                         if (!await _dbContext.SysSettings.AnyAsync()) {
                             var settins = new SysSettingsEntity(_sysSettings.Value.initial, _sysSettings.Value.email, _alipayOptions.Value);

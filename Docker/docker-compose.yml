@@ -44,6 +44,8 @@ services:
       - ENV_DB_CONNECTION=Host=postgres;Port=5432;Userid=postgres;password=terramours1024;Database=TerraMoursGpt;
       - ENV_REDIS_HOST=redis:6379
       - ENV_SEQ_HOST=seq:5341
+      # root 密码，用户名为: terramours@163.com
+      - DEFAULT_ROOT_PSW=terramours@163.com
     volumes:
       # 图片挂载地址，将容器中的图片挂载出来
       - F:\Docker\terra\server\images:/app/images
