@@ -1,0 +1,87 @@
+version: "3.9"
+services:
+  redis:
+    image: redis
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - server
+
+  postgres:
+    image: ankane/pgvector
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=terramours1024
+      - POSTGRES_DB=TerraMoursGpt
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - F:/Docker/postgresql/path/terra/dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - server
+      
+  seq:
+    image: datalust/seq
+    container_name: seq_container
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+    restart: always
+    networks:
+      - server
+      
+  api:
+    image: raokun88/terramours_gpt_server:2.0
+    container_name: terramours_gpt_server
+    environment:
+      - TZ=Asia/Shanghai
+      - ENV_DB_CONNECTION=Host=postgres;Port=5432;Userid=postgres;password=terramours1024;Database=TerraMoursGpt;
+      - ENV_REDIS_HOST=redis:6379
+      - ENV_SEQ_HOST=seq:5341
+    volumes:
+      # 图片挂载地址，将容器中的图片挂载出来
+      - F:\Docker\terra\server\images:/app/images
+      # 可挂载自定义的配置文件快速进行系统配置
+      #- F:\Docker\terra\server/appsettings.json:/app/appsettings.json
+    # ports:
+      # - "3116:80"
+    restart: always
+    networks:
+      - server
+    depends_on:
+      - postgres
+      - redis
+  admin:
+    image: raokun88/terramours_gpt_admin:2.0
+    container_name: terramoursgptadmin
+    environment:
+      - VUE_APP_API_BASE_URL= ''
+    # ports:
+      # - "3226:8081"
+    restart: always
+    networks:
+      - server
+
+  web:
+    image: raokun88/terramours_gpt_web:latest
+    container_name: terramoursgptweb
+    environment:
+      - VUE_APP_API_BASE_URL= ''
+    # ports:
+      # - "3216:8081"
+    restart: always
+    networks:
+      - server
+    
+networks:
+  server:
+    driver:
+      bridge
+
+

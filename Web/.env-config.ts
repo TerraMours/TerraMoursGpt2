@@ -11,7 +11,7 @@ const serviceEnv: ServiceEnv = {
     url: 'http://43.134.164.127:4112'
   },
   prod: {
-    url: 'https://api.terramours.site'
+    url: location.origin+'/api'
   }
 };
 
