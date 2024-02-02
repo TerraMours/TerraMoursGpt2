@@ -101,7 +101,7 @@ docker compose up -d
 
 ### 配置
 
-如果您需要自定义配置，请参考我们的 [docker-compose.yml](Docker/docker-compose.yaml) 文件中的注释，并手动设置环境配置。更改后，请再次运行 `docker-compose up -d`。您可以在我们的[文档](https://docs.dify.ai/getting-started/install-self-hosted/environments)中查看所有环境变量的完整列表。
+如果您需要自定义配置，请参考我们的 [docker-compose.yml](Docker/docker-compose.yaml) 文件中的注释，并手动设置环境配置。更改后，请再次运行 `docker-compose up -d`。您可以在我们的[文档](https://terramours.site/guide/)中查看所有环境变量的完整列表。
 
 
 
@@ -109,8 +109,8 @@ docker compose up -d
 
 我们欢迎您为 TerraMours做出贡献，以帮助改善 TerraMours。包括：提交代码、问题、新想法，或分享您基于 TerraMours创建的有趣且有用的 AI 应用程序。同时，我们也欢迎您在不同的活动、会议和社交媒体上分享 TerraMours。
 
-- [GitHub Issues](https://github.com/langgenius/dify/issues)。👉：使用 TerraMours 时遇到的错误和问题，请参阅[贡献指南](CONTRIBUTING.md)。
-- [电子邮件支持](mailto:terramours@163.com?subject=[GitHub]Questions%20About%20Dify)。👉：关于使用 TerraMours 的问题。
+- [GitHub Issues](https://github.com/TerraMours/TerraMoursGpt2/issues)。👉：使用 TerraMours 时遇到的错误和问题。
+- [电子邮件支持](mailto:terramours@163.com?subject=[GitHub]Questions%20About%20TerraMoursGpt2)。👉：关于使用 TerraMours 的问题。
 - [商业许可](mailto:terramours@163.com?subject=[GitHub]Business%20License%20Inquiry)。👉：有关商业用途许可 TerraMours 的商业咨询。
  - [微信]() 👉：扫描下方二维码，添加微信好友，备注 TerraMours，我们将邀请您加入 TerraMours 社区。  
    <img src="./img/wechat.png" alt="wechat" width="100"/>
@@ -119,7 +119,7 @@ docker compose up -d
 
 ## 项目截图
 
-### 
+
 
 ![image-20231009170148439](./img/image-20231009170148439.png)
 
@@ -139,4 +139,5 @@ docker compose up -d
 
 ## License
 
-This repository is available under the [Dify Open Source License](LICENSE), which is essentially Apache 2.0 with a few additional restrictions.
+This repository is available under the [TerraMoursGpt2 Open Source License](LICENSE), which is essentially Apache 2.0 with a few additional restrictions.
+

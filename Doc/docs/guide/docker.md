@@ -33,6 +33,6 @@ docker-compose pull
 docker-compose up -d
 ```
 ## 四、访问 TerraMoursGpt2
-目前可以通过 ip:3000 直接访问(注意防火墙)。登录用户名为 root，密码为docker-compose.yml环境变量里设置的 DEFAULT_ROOT_PSW。
+目前可以通过 ip:8089 直接访问(注意防火墙)。登录用户名为` terramours@163.com`，密码为docker-compose.yml环境变量里设置的 DEFAULT_ROOT_PSW，默认值：`terramours@163.com`。
 
-如果需要域名访问，请自行配置 Nginx，如果已安装Nginx，请根据nginx/conf.d文件夹下default.conf 内容自行更新。
+如果需要域名访问，请根据nginx/conf.d文件夹下default.conf 内容自行更新。

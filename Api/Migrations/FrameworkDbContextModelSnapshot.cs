@@ -12,7 +12,7 @@ using TerraMours_Gpt.Framework.Infrastructure.Contracts.Commons;
 
 #nullable disable
 
-namespace TerraMours_Gpt.Migrations
+namespace TerraMours_Gpt_Api.Migrations
 {
     [DbContext(typeof(FrameworkDbContext))]
     partial class FrameworkDbContextModelSnapshot : ModelSnapshot

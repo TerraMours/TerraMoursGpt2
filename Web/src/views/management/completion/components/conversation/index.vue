@@ -59,7 +59,7 @@ interface Emits {
   (e: 'update:visible', visible: boolean): void;
   (e: 'updateDataTable'): void;
 }
-const { loading, startLoading, endLoading } = useLoading(false);
+const { startLoading, endLoading } = useLoading(false);
 const emit = defineEmits<Emits>();
 
 const modalVisible = computed({

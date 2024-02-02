@@ -147,6 +147,6 @@ declare namespace KnowledgeManagement {
     /** 表格的key（id） */
     key: number;
     namespace: string;
-    knowledgeId: number | null;
+    knowledgeId: number;
   }
 }

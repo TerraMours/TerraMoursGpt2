@@ -1,4 +1,5 @@
 ﻿using System;
+using Essensoft.Paylink.Alipay;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Newtonsoft.Json.Linq;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -7,7 +8,7 @@ using TerraMours_Gpt.Framework.Infrastructure.Contracts.Commons;
 
 #nullable disable
 
-namespace TerraMours_Gpt.Migrations
+namespace TerraMours_Gpt_Api.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration
@@ -25,12 +26,12 @@ namespace TerraMours_Gpt.Migrations
                     Description = table.Column<string>(type: "text", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -47,20 +48,46 @@ namespace TerraMours_Gpt.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ConversationName = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<long>(type: "bigint", nullable: true),
+                    KnowledgeId = table.Column<int>(type: "integer", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChatConversation", x => x.ConversationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatRecord",
+                columns: table => new
+                {
+                    ChatRecordId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ModelType = table.Column<int>(type: "integer", nullable: true),
+                    Model = table.Column<string>(type: "text", nullable: true),
+                    ConversationId = table.Column<long>(type: "bigint", nullable: true),
+                    IP = table.Column<string>(type: "text", nullable: true),
+                    Role = table.Column<string>(type: "text", nullable: true),
+                    Message = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Enable = table.Column<bool>(type: "boolean", nullable: false),
+                    PromptTokens = table.Column<int>(type: "integer", nullable: true),
+                    CompletionTokens = table.Column<int>(type: "integer", nullable: true),
+                    TotalTokens = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatRecord", x => x.ChatRecordId);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,18 +105,47 @@ namespace TerraMours_Gpt.Migrations
                     Like = table.Column<bool>(type: "boolean", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CollectRecord", x => x.CollectRecordId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmbedRecord",
+                columns: table => new
+                {
+                    EmbedRecordId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EmbedType = table.Column<int>(type: "integer", nullable: true),
+                    ApiKey = table.Column<string>(type: "text", nullable: true),
+                    Result = table.Column<string>(type: "jsonb", nullable: true),
+                    Input = table.Column<string>(type: "jsonb", nullable: true),
+                    PromptTokens = table.Column<int>(type: "integer", nullable: true),
+                    CompletionTokens = table.Column<int>(type: "integer", nullable: true),
+                    TotalTokens = table.Column<int>(type: "integer", nullable: true),
+                    Version = table.Column<long>(type: "bigint", nullable: false),
+                    Enable = table.Column<bool>(type: "boolean", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CreateID = table.Column<long>(type: "bigint", nullable: true),
+                    CreatorName = table.Column<string>(type: "text", nullable: true),
+                    ModifyID = table.Column<long>(type: "bigint", nullable: true),
+                    ModifierName = table.Column<string>(type: "text", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Remark = table.Column<string>(type: "text", nullable: true),
+                    OrderNo = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmbedRecord", x => x.EmbedRecordId);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,12 +158,12 @@ namespace TerraMours_Gpt.Migrations
                     ImagOptions = table.Column<ImagOptions>(type: "jsonb", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -136,12 +192,12 @@ namespace TerraMours_Gpt.Migrations
                     LikeCount = table.Column<int>(type: "integer", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -157,24 +213,55 @@ namespace TerraMours_Gpt.Migrations
                     KeyId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ApiKey = table.Column<string>(type: "text", nullable: true),
-                    ExpirationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExpirationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Used = table.Column<decimal>(type: "numeric", nullable: true),
                     UnUsed = table.Column<decimal>(type: "numeric", nullable: true),
                     Total = table.Column<decimal>(type: "numeric", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KeyOptions", x => x.KeyId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KnowledgeItem",
+                columns: table => new
+                {
+                    KnowledgeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    KnowledgeName = table.Column<string>(type: "text", nullable: true),
+                    IsCommon = table.Column<bool>(type: "boolean", nullable: true),
+                    KnowledgeType = table.Column<int>(type: "integer", nullable: true),
+                    ApiKey = table.Column<string>(type: "text", nullable: true),
+                    IndexName = table.Column<string>(type: "text", nullable: true),
+                    WorkSpace = table.Column<string>(type: "text", nullable: true),
+                    NameSpace = table.Column<string>(type: "text", nullable: true),
+                    BaseUrl = table.Column<string>(type: "text", nullable: true),
+                    ImagePath = table.Column<string>(type: "text", nullable: true),
+                    Version = table.Column<long>(type: "bigint", nullable: false),
+                    Enable = table.Column<bool>(type: "boolean", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CreateID = table.Column<long>(type: "bigint", nullable: true),
+                    CreatorName = table.Column<string>(type: "text", nullable: true),
+                    ModifyID = table.Column<long>(type: "bigint", nullable: true),
+                    ModifierName = table.Column<string>(type: "text", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Remark = table.Column<string>(type: "text", nullable: true),
+                    OrderNo = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KnowledgeItem", x => x.KnowledgeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,8 +280,11 @@ namespace TerraMours_Gpt.Migrations
                     ImagePath = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp", nullable: false),
-                    PaidTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    PaidTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    IsVIP = table.Column<bool>(type: "boolean", nullable: true),
+                    VipLevel = table.Column<int>(type: "integer", nullable: true),
+                    VipTime = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -212,12 +302,12 @@ namespace TerraMours_Gpt.Migrations
                     UsedCount = table.Column<int>(type: "integer", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -235,12 +325,12 @@ namespace TerraMours_Gpt.Migrations
                     Word = table.Column<string>(type: "text", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -258,12 +348,12 @@ namespace TerraMours_Gpt.Migrations
                     Dictionary = table.Column<JObject>(type: "jsonb", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -290,12 +380,12 @@ namespace TerraMours_Gpt.Migrations
                     IsShow = table.Column<bool>(type: "boolean", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -315,14 +405,16 @@ namespace TerraMours_Gpt.Migrations
                     HasChildren = table.Column<bool>(type: "boolean", nullable: false),
                     DeptId = table.Column<long>(type: "bigint", nullable: true),
                     DeptName = table.Column<string>(type: "text", nullable: true),
+                    IsAdmin = table.Column<bool>(type: "boolean", nullable: true),
+                    IsNewUser = table.Column<bool>(type: "boolean", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -339,14 +431,15 @@ namespace TerraMours_Gpt.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Initial = table.Column<Initial>(type: "jsonb", nullable: true),
                     Email = table.Column<Email>(type: "jsonb", nullable: true),
+                    Alipay = table.Column<AlipayOptions>(type: "jsonb", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -379,19 +472,19 @@ namespace TerraMours_Gpt.Migrations
                     LoginFailCount = table.Column<int>(type: "integer", nullable: true),
                     EnableLogin = table.Column<bool>(type: "boolean", nullable: false),
                     IsSuperAdmin = table.Column<bool>(type: "boolean", nullable: false),
-                    ExpireTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExpireTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     VipLevel = table.Column<int>(type: "integer", nullable: true),
-                    VipExpireTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    VipExpireTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     ImageCount = table.Column<int>(type: "integer", nullable: true),
                     Balance = table.Column<decimal>(type: "numeric(18,6)", precision: 18, scale: 6, nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -412,12 +505,12 @@ namespace TerraMours_Gpt.Migrations
                     UsedUserIds = table.Column<string[]>(type: "text[]", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -438,15 +531,18 @@ namespace TerraMours_Gpt.Migrations
                     Discount = table.Column<decimal>(type: "numeric", nullable: true),
                     ImagePath = table.Column<string>(type: "text", nullable: true),
                     Stock = table.Column<int>(type: "integer", nullable: true),
+                    IsVIP = table.Column<bool>(type: "boolean", nullable: true),
+                    VipLevel = table.Column<int>(type: "integer", nullable: true),
+                    VipTime = table.Column<int>(type: "integer", nullable: true),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -462,37 +558,6 @@ namespace TerraMours_Gpt.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChatRecord",
-                columns: table => new
-                {
-                    ChatRecordId = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ModelType = table.Column<int>(type: "integer", nullable: true),
-                    Model = table.Column<string>(type: "text", nullable: true),
-                    ConversationId = table.Column<long>(type: "bigint", nullable: true),
-                    IP = table.Column<string>(type: "text", nullable: true),
-                    Role = table.Column<string>(type: "text", nullable: true),
-                    Message = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "timestamp", nullable: false),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    PromptTokens = table.Column<int>(type: "integer", nullable: true),
-                    CompletionTokens = table.Column<int>(type: "integer", nullable: true),
-                    TotalTokens = table.Column<int>(type: "integer", nullable: true),
-                    ChatConversationConversationId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChatRecord", x => x.ChatRecordId);
-                    table.ForeignKey(
-                        name: "FK_ChatRecord_ChatConversation_ChatConversationConversationId",
-                        column: x => x.ChatConversationConversationId,
-                        principalTable: "ChatConversation",
-                        principalColumn: "ConversationId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SysRolesToMenu",
                 columns: table => new
                 {
@@ -503,12 +568,12 @@ namespace TerraMours_Gpt.Migrations
                     MenuId = table.Column<long>(type: "bigint", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -532,14 +597,15 @@ namespace TerraMours_Gpt.Migrations
                     ButtonShowName = table.Column<string>(type: "text", nullable: false),
                     ButtonEnName = table.Column<string>(type: "text", nullable: false),
                     RolesToMenuId = table.Column<long>(type: "bigint", nullable: false),
+                    SysRolesToMenuRolesToMenuId = table.Column<long>(type: "bigint", nullable: true),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false, computedColumnSql: "xmin"),
                     Enable = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreateID = table.Column<long>(type: "bigint", nullable: true),
                     CreatorName = table.Column<string>(type: "text", nullable: true),
                     ModifyID = table.Column<long>(type: "bigint", nullable: true),
                     ModifierName = table.Column<string>(type: "text", nullable: true),
-                    ModifyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifyDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     OrderNo = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -547,23 +613,21 @@ namespace TerraMours_Gpt.Migrations
                 {
                     table.PrimaryKey("PK_SysMenuButtons", x => x.MenuButtonId);
                     table.ForeignKey(
-                        name: "FK_SysMenuButtons_SysMenus_MenuId",
-                        column: x => x.MenuId,
-                        principalTable: "SysMenus",
-                        principalColumn: "MenuId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SysMenuButtons_SysRolesToMenu_MenuId",
-                        column: x => x.MenuId,
+                        name: "FK_SysMenuButtons_SysRolesToMenu_SysRolesToMenuRolesToMenuId",
+                        column: x => x.SysRolesToMenuRolesToMenuId,
                         principalTable: "SysRolesToMenu",
-                        principalColumn: "RolesToMenuId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RolesToMenuId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChatRecord_ChatConversationConversationId",
-                table: "ChatRecord",
-                column: "ChatConversationConversationId");
+                name: "IX_EmbedRecord_ApiKey",
+                table: "EmbedRecord",
+                column: "ApiKey");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KnowledgeItem_ApiKey",
+                table: "KnowledgeItem",
+                column: "ApiKey");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Product_CategoryId",
@@ -571,9 +635,9 @@ namespace TerraMours_Gpt.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SysMenuButtons_MenuId",
+                name: "IX_SysMenuButtons_SysRolesToMenuRolesToMenuId",
                 table: "SysMenuButtons",
-                column: "MenuId");
+                column: "SysRolesToMenuRolesToMenuId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SysRolesToMenu_RoleId",
@@ -585,10 +649,16 @@ namespace TerraMours_Gpt.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ChatConversation");
+
+            migrationBuilder.DropTable(
                 name: "ChatRecord");
 
             migrationBuilder.DropTable(
                 name: "CollectRecord");
+
+            migrationBuilder.DropTable(
+                name: "EmbedRecord");
 
             migrationBuilder.DropTable(
                 name: "GptOptions");
@@ -598,6 +668,9 @@ namespace TerraMours_Gpt.Migrations
 
             migrationBuilder.DropTable(
                 name: "KeyOptions");
+
+            migrationBuilder.DropTable(
+                name: "KnowledgeItem");
 
             migrationBuilder.DropTable(
                 name: "Order");
@@ -618,6 +691,9 @@ namespace TerraMours_Gpt.Migrations
                 name: "SysMenuButtons");
 
             migrationBuilder.DropTable(
+                name: "SysMenus");
+
+            migrationBuilder.DropTable(
                 name: "SysSettings");
 
             migrationBuilder.DropTable(
@@ -627,13 +703,7 @@ namespace TerraMours_Gpt.Migrations
                 name: "Verification");
 
             migrationBuilder.DropTable(
-                name: "ChatConversation");
-
-            migrationBuilder.DropTable(
                 name: "Category");
-
-            migrationBuilder.DropTable(
-                name: "SysMenus");
 
             migrationBuilder.DropTable(
                 name: "SysRolesToMenu");

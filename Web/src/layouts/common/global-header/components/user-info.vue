@@ -110,34 +110,46 @@ async function fetchUser() {
   try {
     loading.value = true;
     const { data } = await fetchUserInfo();
-    config.value = data;
-    if (data.headImageUrl !== null) {
-      fileList.value = [
-        {
-          id: 'c',
-          name: '我是自带url的图片.png',
-          status: 'finished',
-          url: data.headImageUrl
-        }
-      ];
-    } else {
-      fileList.value = [];
+    if (data !== null) {
+      config.value = data;
+      if (data.headImageUrl !== null) {
+        fileList.value = [
+          {
+            id: 'c',
+            name: '我是自带url的图片.png',
+            status: 'finished',
+            url: data.headImageUrl
+          }
+        ];
+      } else {
+        fileList.value = [];
+      }
     }
   } finally {
     loading.value = false;
   }
 }
 async function UpdateUser() {
-  if (config.value === null) {
+  if (config.value === null || config.value === undefined) {
     ms.error('获取用户失败');
-    return;
+  } else {
+    if (fileList.value !== null && fileList.value![0] !== null) config.value.headImageUrl = fileList.value![0].url;
+    const { data } = await fetchUpdateUser(
+      config.value?.userId,
+      config.value.userName,
+      config.value?.headImageUrl,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+    if (data) {
+      ms.success('保存成功');
+      show.value = false;
+    } else ms.error('保存失败');
   }
-  if (fileList.value !== null && fileList.value![0] !== null) config.value.headImageUrl = fileList.value![0].url;
-  const { data } = await fetchUpdateUser(config.value.userId, config.value.userName, config.value?.headImageUrl);
-  if (data) {
-    ms.success('保存成功');
-    show.value = false;
-  } else ms.error('保存失败');
 }
 
 onMounted(() => {

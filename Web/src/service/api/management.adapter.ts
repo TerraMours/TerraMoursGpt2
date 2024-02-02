@@ -292,7 +292,7 @@ export function adapterOfFetchVectorList(
       index: index + 1,
       key: item.score,
       namespace: data.namespace,
-      knowledgeId: null,
+      knowledgeId: 0,
       ...item
     };
 

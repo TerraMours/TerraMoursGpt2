@@ -1,20 +1,9 @@
 {
-  "name": "soybean-admin",
-  "version": "0.9.9",
-  "description": "A fresh and elegant admin template, based on Vue3、Vite3、TypeScript、NaiveUI and UnoCSS. 一个基于Vue3、Vite3、TypeScript、NaiveUI and UnoCSS的清新优雅的中后台模版。",
-  "author": {
-    "name": "TerraMours",
-    "email": "honghuangdc@gmail.com",
-    "url": "https://github.com/honghuangdc"
-  },
-  "license": "MIT",
-  "homepage": "https://github.com/honghuangdc/soybean-admin",
-  "repository": {
-    "url": "https://github.com/honghuangdc/soybean-admin.git"
-  },
-  "bugs": {
-    "url": "https://github.com/honghuangdc/soybean-admin/issues"
-  },
+	"name": "TerraMoursGpt",
+	"version": "1.0.0",
+	"private": false,
+	"description": "TerraMoursGpt",
+	"author": "Raokun <terramours@163.com>",
   "keywords": [
     "Vue",
     "Vue3",
@@ -45,9 +34,9 @@
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit --skipLibCheck",
     "lint": "eslint . --max-warnings=0 --fix --ext .js,.jsx,.mjs,.json,.ts,.tsx,.vue",
-    "format": "soy prettier-format",
-    "commit": "soy git-commit",
-    "cleanup": "soy cleanup",
+    "format": "prettier-format",
+    "commit": "git-commit",
+    "cleanup": "cleanup",
     "update-pkg": "soy update-pkg",
     "tsx": "tsx",
     "logo": "tsx ./scripts/logo.ts",

@@ -338,5 +338,15 @@ declare namespace I18nType {
       showRawText: string;
       delete: string;
     };
+    setting: {
+      avatarLink: string;
+      name: string;
+      description: string;
+      vipLevel: string;
+      vipExpireTime: string;
+      tobeVip: string;
+      save: string;
+      balance: string;
+    };
   }
 }

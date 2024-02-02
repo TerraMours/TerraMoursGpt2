@@ -31,7 +31,6 @@ import {
   HeaderMenu,
   MenuCollapse,
   SettingButton,
-  SystemMessage,
   ThemeMode,
   UserAvatar
 } from './components';

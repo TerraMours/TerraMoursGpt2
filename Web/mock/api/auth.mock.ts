@@ -68,6 +68,8 @@ export default defineMock([
       }
 
       const userInfo: Auth.UserInfo = {
+        balance: 0,
+        headImageUrl: undefined,
         userId: 0,
         userName: '',
         roleId: 'user'

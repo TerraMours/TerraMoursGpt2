@@ -10,7 +10,9 @@ export function getUserInfo() {
   const emptyInfo: Auth.UserInfo = {
     userId: 0,
     userName: '',
-    roleId: 'user'
+    roleId: 'user',
+    headImageUrl: null, // 头像url
+    balance: 0 // 用户余额
   };
   const userInfo: Auth.UserInfo = localStg.get('userInfo') || emptyInfo;
 

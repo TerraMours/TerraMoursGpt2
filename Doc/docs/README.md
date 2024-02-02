@@ -18,120 +18,46 @@ features:
   details: TerraMours 已经实现了用户管理、权限验证、日志管理等基础功能，开发者可以根据业务需求快速开发相关业务系统。
 footer: MIT Licensed | Copyright (c) 2023 terramours
 ---
-### GPT管理系统 快速搭建
+### Docker Compose 快速部署
 
-#### 1.新建一个空文件命名为docker-compose.yml
-
-新建一个空文件命名为docker-compose.yml，将以下内容粘贴到文件中保存
-
-```yaml
-version: "3.9"
-services:
-  redis:
-    image: redis
-    container_name: redis_container
-    ports:
-      - "6379:6379"
-    restart: always
-    networks:
-      - server
-
-  postgres:
-    image: postgres
-    container_name: postgres_container
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=terramours1024
-      - POSTGRES_DB=TerraMoursGpt
-    ports:
-      - "5432:5432"
-    restart: always
-    networks:
-      - server
-
-  seq:
-    image: datalust/seq
-    container_name: seq_container
-    environment:
-      - ACCEPT_EULA=Y
-    ports:
-      - "5341:80"
-    restart: always
-    networks:
-      - server
-
-  server:
-    image: raokun88/terramours_gpt_server:latest
-    container_name: terramours_gpt_server
-    environment:
-      - TZ=Asia/Shanghai
-      - ENV_DB_CONNECTION=Host=postgres;Port=5432;Userid=postgres;password=terramours1024;Database=TerraMoursGpt;
-      - ENV_REDIS_HOST=redis:6379
-      - ENV_SEQ_HOST=http://<YOUR-SERVER-IP>:5341/
-    volumes:
-      # 图片挂载地址，将容器中的图片挂载出来
-      - /path/terra/images:/app/images
-      # 可挂载自定义的配置文件快速进行系统配置
-      #- F:\Docker\terra\server/appsettings.json:/app/appsettings.json
-    ports:
-      - "3116:80"
-    restart: always
-    networks:
-      - server
-    depends_on:
-      - postgres
-      - redis
-  admin:
-    image: raokun88/terramours_gpt_admin:latest
-    container_name: terramoursgptadmin
-    environment:
-      - VUE_APP_API_BASE_URL=http://<YOUR-SERVER-IP>:3116
-    ports:
-      - "3226:8081"
-    restart: always
-    networks:
-      - server
-
-  web:
-    image: raokun88/terramours_gpt_web:latest
-    container_name: terramoursgptweb
-    environment:
-      - VUE_APP_API_BASE_URL=http://<YOUR-SERVER-IP>:3116
-    ports:
-      - "3216:8081"
-    restart: always
-    networks:
-      - server
-
-networks:
-  server:
-    driver:
-      bridge
+#### 一、安装 Docker 和 docker-compose
 
 ```
-
-::: warning 安装注意
-
-1.修改yml：将`<YOUR-SERVER-IP>` 替换成服务器IP<br/>
-2.默认管理员账号密码：terramours@163.com  terramours@163.com<br/>
-3.系统报错，通过seq查看，查看地址：`http://<YOUR-SERVER-IP>:5341/`<br/>
-4.seq日志中显示`初始化数据库成功` 即代表后端服务初始化成功，首次安装可能会有报错的现象，建议dockercompose安装完成后重启terramours_gpt_server容器<br/>
-5.更多服务配置，可以把服务端的github上的appsettings.json文件拷到服务端，通过挂载修改容器中的配置文件<br/>
-```
-# 可挂载自定义的配置文件快速进行系统配置
-- /path/terra/appsettings.json:/app/appsettings.json
-```
-
-:::
-
-
-#### 2.上传dockercompose文件到服务器
-
-上传dockercompose文件到服务器，我使用的是XFTP。
-
-#### 3.执行docker命令，构建dockercompose
-
-```shell
-docker-compose up
+# 安装 Docker
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+systemctl enable --now docker
+# 安装 docker-compose
+curl -L https://github.com/docker/compose/releases/download/2.20.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+# 验证安装
+docker -v
+docker-compose -v
+# 如失效，自行百度~
 ```
 
+#### 二、创建目录并下载 docker-compose.yml
+
+依次执行下面命令，创建 terramours 文件并拉取 docker.zip 压缩包，解压后会有 docker-compose.yml和nginx文件夹。
+
+非 Linux 环境或无法访问外网环境，可手动创建一个目录，并下载链接文件: docker.zip
+
+
+```
+mkdir terramours
+cd terramours
+curl -O https://raw.githubusercontent.com/labring/TerraMoursGpt2/main/Docker/Docker.zip
+```
+
+#### 三、启动容器
+
+```
+# 在 docker-compose.yml 同级目录下执行
+docker-compose pull
+docker-compose up -d
+```
+
+#### 四、访问 TerraMoursGpt2
+
+目前可以通过 ip:8089 直接访问(注意防火墙)。登录用户名为` terramours@163.com`，密码为docker-compose.yml环境变量里设置的 DEFAULT_ROOT_PSW，默认值：`terramours@163.com`。
+
+如果需要域名访问，请根据nginx/conf.d文件夹下default.conf 内容自行更新。

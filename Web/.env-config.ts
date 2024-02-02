@@ -5,13 +5,13 @@ type ServiceEnv = Record<ServiceEnvType, ServiceEnvConfig>;
 const serviceEnv: ServiceEnv = {
   dev: {
     // url: 'https://api.terramours.site'
-    url: 'http://localhost:3116'
+    url: 'http://localhost:8089/api'
   },
   test: {
     url: 'http://43.134.164.127:4112'
   },
   prod: {
-    url: location.origin+'/api'
+    url: `/`
   }
 };
 
