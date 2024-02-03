@@ -23,7 +23,7 @@ docker-compose -v
 ```
 mkdir terramours
 cd terramours
-curl -O https://raw.githubusercontent.com/labring/TerraMoursGpt2/main/Docker.zip
+curl -O https://raw.githubusercontent.com/TerraMours/TerraMoursGpt2/blob/main/Docker.zip
 ```
 ## 三、启动容器
 
