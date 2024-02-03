@@ -90,7 +90,7 @@ TerraMoursGpt2 向量数据库+LLM模型 的知识库AI助手平台，支持gpt-
 
 ### 快速启动
 
-启动 TerraMours 服务器的最简单方法是运行我们的 [docker-compose.yml](Docker/docker-compose.yaml) 文件。在运行安装命令之前，请确保您的机器上安装了 [Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)：
+启动 TerraMours 服务器的最简单方法是运行我们的 [docker-compose.yml](Docker/docker-compose.yml) 文件。在运行安装命令之前，请确保您的机器上安装了 [Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)：
 
 ```bash
 cd docker
@@ -101,7 +101,7 @@ docker compose up -d
 
 ### 配置
 
-如果您需要自定义配置，请参考我们的 [docker-compose.yml](Docker/docker-compose.yaml) 文件中的注释，并手动设置环境配置。更改后，请再次运行 `docker-compose up -d`。您可以在我们的[文档](https://terramours.site/guide/)中查看所有环境变量的完整列表。
+如果您需要自定义配置，请参考我们的 [docker-compose.yml](Docker/docker-compose.yml) 文件中的注释，并手动设置环境配置。更改后，请再次运行 `docker-compose up -d`。您可以在我们的[文档](https://terramours.site/guide/)中查看所有环境变量的完整列表。
 
 
 
