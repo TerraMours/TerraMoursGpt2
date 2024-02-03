@@ -1,0 +1,111 @@
+version: "3.9"
+services:
+  redis:
+    image: redis
+    container_name: redis_container
+    # 正式环境不建议将端口公开
+    # ports:
+      # - "6379:6379"
+    volumes:
+      - ./volumes/redis/data:/data
+    restart: always
+    networks:
+      - server
+
+  postgres:
+    image: ankane/pgvector
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=terramours1024
+      - POSTGRES_DB=TerraMoursGpt
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./volumes/db/dbdata:/var/lib/postgresql/data
+    # 正式环境不建议将端口公开
+    # ports:
+      # - "5432:5432"
+    restart: always
+    networks:
+      - server
+      
+  seq:
+    image: datalust/seq
+    container_name: seq_container
+    environment:
+      - ACCEPT_EULA=Y
+      # 默认用户名密码：admin|123456  获取密码hush： echo '<password>' | docker run --rm -i datalust/seq config hash
+      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=QFWEvOxvmd8OxN1KuUyW5WtTM2B+pX80maHEC723J88duMfJf+gBv14eYP7IZa+tQdh5IHtjWGjeUcwkfho3jS+X5doh1yH4poNHEFEqxPwa
+    ports:
+      - "5341:80"
+    restart: always
+    networks:
+      - server
+      
+  server:
+    image: raokun88/terramours_gpt_server:latest
+    container_name: terramours_gpt_server
+    environment:
+      - TZ=Asia/Shanghai
+      - ENV_DB_CONNECTION=Host=postgres;Port=5432;Userid=postgres;password=terramours1024;Database=TerraMoursGpt;
+      - ENV_REDIS_HOST=redis:6379
+      - ENV_SEQ_HOST=seq:5341
+      # root 密码，用户名为: terramours@163.com
+      - DEFAULT_ROOT_PSW=terramours@163.com
+    volumes:
+      # 图片挂载地址，将容器中的图片挂载出来
+      - ./volumes/app/images:/app/images
+      # 可挂载自定义的配置文件快速进行系统配置
+      #- ./volumes/app/appsettings.json:/app/appsettings.json
+    # ports:
+      # - "3777:8080"
+    restart: always
+    networks:
+      - server
+    depends_on:
+      - postgres
+      - redis
+      - seq
+  admin:
+    image: raokun88/terramours_gpt_admin:latest
+    container_name: terramours_gpt_admin
+    environment:
+      - VUE_APP_API_BASE_URL= ''
+    # ports:
+      # - "3226:8081"
+    restart: always
+    networks:
+      - server
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/proxy.conf:/etc/nginx/proxy.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - server
+      - admin
+      - seq
+    ports:
+      - "8090:80"
+    networks:
+      - server
+  # 定制化前端项目 项目地址：https://github.com/TerraMours/TerraMours_Gpt_Web
+  # web:
+    # image: raokun88/terramours_gpt_web:latest
+    # container_name: terramoursgptweb
+    # environment:
+      # - VUE_APP_API_BASE_URL= ''
+    # # ports:
+      # # - "3216:8081"
+    # restart: always
+    # networks:
+      # - server
+    
+networks:
+  server:
+    driver:
+      bridge
+
+
