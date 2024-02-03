@@ -7,10 +7,10 @@
             <icon-ic-round-plus class="mr-4px text-20px" />
             新增
           </n-button>
-          <!-- <n-button type="success">
+          <n-button type="success" @click="handleChange">
             <icon-uil:export class="mr-4px text-20px" />
-            导出Excel
-          </n-button> -->
+            更新配置
+          </n-button>
         </n-space>
         <n-space align="center" :size="18">
           <n-button size="small" type="primary" @click="getTableData">
@@ -19,16 +19,12 @@
           </n-button>
         </n-space>
       </n-space>
-<!--      <n-data-table :columns="columns" :data="tableData" :loading="loading" :pagination="pagination" />-->
 			<n-data-table
 				:key="(row) => row.key"
 				:columns="columns"
 				:data="keyList"
-				:loading="loading"
 				:pagination="pagination"
-				:on-update:page="handlePageChange"
 			/>
-<!--      <table-action-modal v-model:visible="visible" :type="modalType" :edit-data="editData" @updateDataTable="getTableData"/>-->
     </n-card>
   </div>
 </template>
@@ -38,13 +34,13 @@ import {defineComponent, h, nextTick, reactive, ref} from 'vue';
 import type { Ref } from 'vue';
 import {NButton, NInput, NPopconfirm, NSpace} from 'naive-ui';
 import type { DataTableColumns, PaginationProps } from 'naive-ui';
-import {fetchKeyOptionList, fetchDeleteKeyOptions, GetOpenAIOptions} from '@/service';
-import { useBoolean, useLoading } from '@/hooks';
-import TableActionModal from './components/table-action-modal.vue';
+import {
+    GetKeyList,
+    ChangKeyList
+} from '@/service';
 import type { ModalType } from './components/table-action-modal.vue';
+import {useLoading} from "@/hooks";
 const { loading, startLoading, endLoading } = useLoading(false);
-const { bool: visible, setTrue: openModal } = useBoolean();
-
 const Options: { label: string; value: string,disabled: boolean,type:number}[] = [
 	{ label: 'ChatGpt', value: 'ChatGpt',disabled:true,type:1 },
 	{ label: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo',disabled:false,type:1 },
@@ -86,7 +82,19 @@ const ModelOptions: { label: string; value: number,disabled: boolean}[] = [
 	{ label: 'stable diffusion', value: 4,disabled:false },
 	{ label: 'Midjornay', value: 5,disabled:false },
 ]
-
+const pagination: PaginationProps = reactive({
+	page: 1,
+	pageSize: 8,
+	showSizePicker: true,
+	pageSizes: [10, 15, 20, 25, 30],
+	onChange: (page: number) => {
+		pagination.page = page;
+	},
+	onUpdatePageSize: (pageSize: number) => {
+		pagination.pageSize = pageSize;
+		pagination.page = 1;
+	}
+});
 const typeOptions = (type:number) => {
   return Options.filter(m=>m.type === type);
 }
@@ -123,9 +131,9 @@ const columns: Ref<DataTableColumns<ApiGptManagement.AKeyOption>> = ref([
     align: 'center',
     render (row) {
       return h(ShowOrEdit, {
-        value: row.key,
+        value: row.baseUrl,
         onUpdateValue (v) {
-          row.key = v
+          row.baseUrl = v
         }
       })
     }
@@ -165,28 +173,27 @@ const columns: Ref<DataTableColumns<ApiGptManagement.AKeyOption>> = ref([
 
 //key池
 const keyList =ref< ApiGptManagement.AKeyOption[]>([]);
-const page = ref(1)
-async function GetOpenAIOption() {
-	const { data } = await GetOpenAIOptions();
-	if(data !=null && data.openAI !=null){
-		keyList.value=data.openAI.keyList;
-	}
+async function getTableData() {
+    startLoading();
+    const {data} = await GetKeyList();
+    if (data != null) {
+        keyList.value = data;
+        endLoading();
+    }
 }
-
-const getDataIndex = (key) => {
-	return keyList.value.findIndex((item) => item.key === key)
-}
-const handlePageChange = (curPage) => {
-	keyList.value = curPage
-}
-
 const addItem = () => {
-  keyList.value.push({key:'',baseUrl:'',isEnable:true,modelTypes:[],type:1});
+  //数组的unshift()方法,将新增的内容显示在数组的最前面
+  keyList.value.unshift({key:'',baseUrl:'',isEnable:true,modelTypes:[],type:1});
 };
 async function handleDeleteTable(index: number) {
   keyList.value.splice(index, 1);
 }
-
+async function handleChange(){
+    const { data } = await ChangKeyList(keyList.value);
+    if(data){
+        window.$message?.success('保存成功！');
+    }
+}
 const ShowOrEdit = defineComponent({
   props: {
     value: {
@@ -236,7 +243,7 @@ const ShowOrEdit = defineComponent({
 });
 
 function init() {
-	GetOpenAIOption();
+	getTableData();
 }
 
 // 初始化

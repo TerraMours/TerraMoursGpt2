@@ -27,7 +27,7 @@
         /// <summary>
         /// 是否能登陆 账号被锁
         /// </summary>
-        public bool EnableLogin { get; set; }
+        public bool? EnableLogin { get; set; }
 
         /// <summary>
         /// 头像url地址 

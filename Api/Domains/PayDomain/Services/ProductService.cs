@@ -156,7 +156,7 @@ namespace TerraMours_Gpt.Domains.PayDomain.Services
                     file.CopyTo(fs);
                     fs.Flush();
                 }
-                return ApiResponse<string>.Success($"/product/{fileName}");
+                return ApiResponse<string>.Success($"/api/images/product/{fileName}");
             }
             catch (Exception ex)
             {

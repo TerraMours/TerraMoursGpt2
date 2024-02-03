@@ -291,7 +291,7 @@ app.UseHangfireDashboard();// 使用 Hangfire 控制面板
 //app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions {
     FileProvider = new PhysicalFileProvider(AppDomain.CurrentDomain.BaseDirectory + "/images"),
-    RequestPath = ""
+    RequestPath = "/api/images"
 });
 
 //`UseCors` 添加 CORS 中间件。 对 `UseCors` 的调用必须放在 `UseRouting` 之后，但在 `UseAuthorization` 之前。 不然会出现前端获取不到response的现象

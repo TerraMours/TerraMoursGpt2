@@ -381,7 +381,14 @@ export function GetOpenAIOptions(){
 export function ChangeOpenAIOptions(email:ApiGptManagement.OpenAIOptions){
   return request.post<boolean>('/api/v1/Settings/ChangeOpenAIOptions',email);
 }
-
+/**获取Key池 */
+export function GetKeyList(){
+	return request.get<ApiGptManagement.AKeyOption[]>('/api/v1/Settings/GetKeyList');
+}
+/**修改Key池 */
+export function ChangKeyList(keys:ApiGptManagement.AKeyOption[]){
+	return request.post<boolean>('/api/v1/Settings/ChangKeyList',keys);
+}
 /**获取图片生成配置 */
 export function GetImagOptions(){
   return request.get<ApiGptManagement.ImagOptions>('/api/v1/Settings/GetImagOptions');

@@ -54,5 +54,17 @@ namespace TerraMours_Gpt.Domains.GptDomain.IServices
         /// </summary>
         /// <returns></returns>
         public Task<ApiResponse<bool>> ChangeAlipayOptions(AlipayOptions alipayOptions, long? userId);
+        /// <summary>
+        /// 获取key池
+        /// </summary>
+        /// <returns></returns>
+        public Task<ApiResponse<KeyOption[]>> GetKeyList(long? userId);
+        /// <summary>
+        /// 更新key池
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+
+        public Task<ApiResponse<bool>> ChangKeyList(KeyOption[] keys, long? userId);
     }
 }

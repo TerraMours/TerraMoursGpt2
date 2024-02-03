@@ -57,12 +57,14 @@ namespace TerraMours.Domains.LoginDomain.Services
                 {
                     return ApiResponse<LoginRes>.Fail("用户或者密码不正确");
                 }
+                var role = await _dbContext.SysRoles.FirstOrDefaultAsync(m=>m.RoleId==user.RoleId);
                 //需要使用到的Claims ,
                 var claims = new List<Claim>();
                 claims.Add(new Claim(ClaimTypes.Name, user.UserEmail));
                 claims.Add(new Claim(ClaimTypes.Role, user.RoleId.ToString()));
                 claims.Add(new Claim(ClaimTypes.UserData, user.UserId.ToString()));
-
+                //新增管理员权限验证
+                claims.Add(new Claim("isAdmin", role?.IsAdmin.ToString()));
                 //生成token
                 var token = CreateToken(claims);
 

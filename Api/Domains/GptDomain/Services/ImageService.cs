@@ -68,8 +68,6 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
 
         public async Task<ApiResponse<PagedRes<ImageRes>>> ShareImageList(PageReq page) {
             var imageOption = await _dbContext.GptOptions.FirstOrDefaultAsync();
-            // 获取图片路径
-            var baseUrl = imageOption.ImagOptions.ImagFileBaseUrl;
             var query = _dbContext.ImageRecords.Where(m => (string.IsNullOrEmpty(page.QueryString) || m.Prompt.Contains(page.QueryString)) && m.Enable == true && m.IsPublic == true);
             var total = await query.CountAsync();
             var item = await query.OrderByDescending(m => m.CreateDate).Skip((page.PageIndex - 1) * page.PageSize).Take(page.PageSize).ToListAsync();
@@ -81,22 +79,17 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
                 r.IsPublic = null;
                 r.UserName = sysUser.FirstOrDefault(m => m.Key == r.UserId).Value;
 
-                r.ImagUrl =r.ImagUrl.StartsWith("http") ? r.ImagUrl:(baseUrl + r.ImagUrl);
+                r.ImagUrl =r.ImagUrl;
             }
             return ApiResponse<PagedRes<ImageRes>>.Success(new PagedRes<ImageRes>(res, total, page.PageIndex, page.PageSize));
         }
 
         public async Task<ApiResponse<PagedRes<ImageRes>>> MyImageList(PageReq page, long? userId) {
             var imageOption = await _dbContext.GptOptions.FirstOrDefaultAsync();
-            // 获取图片路径
-            var baseUrl = imageOption.ImagOptions.ImagFileBaseUrl;
             var query = _dbContext.ImageRecords.Where(m => (string.IsNullOrEmpty(page.QueryString) || m.Prompt.Contains(page.QueryString)) && m.Enable==true && m.UserId==userId);
             var total = await query.CountAsync();
             var item = await query.OrderByDescending(m => m.CreateDate).Skip((page.PageIndex - 1) * page.PageSize).Take(page.PageSize).ToListAsync();
             var res = _mapper.Map<IEnumerable<ImageRes>>(item);
-            foreach (var r in res) {
-                r.ImagUrl = r.ImagUrl.StartsWith("http") ? r.ImagUrl : (baseUrl + r.ImagUrl);
-            }
             return ApiResponse<PagedRes<ImageRes>>.Success(new PagedRes<ImageRes>(res, total, page.PageIndex, page.PageSize));
         }
 
@@ -159,9 +152,7 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
                 foreach (var item in imgList)
                 {
                     SaveImg(prompt, pranslatePrompt, item, request.BaseType, request.Model,request.Size, request.UserId);
-                    // 获取图片路径
-                    var baseUrl = imageOption.ImagOptions.ImagFileBaseUrl;
-                    outImgList.Add(baseUrl + item);
+                    outImgList.Add(item);
                 }
                 await _dbContext.SaveChangesAsync();
             }
@@ -184,9 +175,7 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
             var sysUser = await _sysUserService.GetUserNameList();
             foreach (var i in res) {
                 i.UserName = sysUser.FirstOrDefault(m => m.Key == i.UserId).Value;
-                // 获取图片路径
-                var baseUrl = imageOption.ImagOptions.ImagFileBaseUrl;
-                i.ImagUrl =i.ImagUrl.StartsWith("http") ? i.ImagUrl:(baseUrl + i.ImagUrl);
+                i.ImagUrl =i.ImagUrl;
             }
             return ApiResponse<PagedRes<ImageRes>>.Success(new PagedRes<ImageRes>(res, total, page.PageIndex, page.PageSize));
         }
@@ -268,7 +257,7 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
                         var imageData = Convert.FromBase64String(item.B64);
                         await System.IO.File.WriteAllBytesAsync(filePath, imageData);
                         // 生成图片 URL，注意将反斜杠转换为正斜杠
-                        var imageUrl = $"/{fileName.Replace("\\", "/")}";
+                        var imageUrl = $"/api/images/{fileName.Replace("\\", "/")}";
                         imgList.Add(imageUrl);
                     }
                 }

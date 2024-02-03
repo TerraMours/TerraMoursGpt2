@@ -55,5 +55,13 @@ namespace TerraMours_Gpt.Framework.Infrastructure.Contracts.GptModels
             this.ModifyID = userId;
             return this;
         }
+
+        public GptOptionsEntity ChangKeyList(KeyOption[] keys, long? userId)
+        {
+            this.OpenAIOptions.OpenAI.KeyList=keys;
+            this.ModifyDate = DateTime.Now;
+            this.ModifyID = userId;
+            return this;
+        }
     }
 }

@@ -8,6 +8,9 @@ using TerraMours.Framework.Infrastructure.EFCore;
 using TerraMours_Gpt.Domains.GptDomain.IServices;
 using TerraMours_Gpt.Framework.Infrastructure.Contracts.Commons;
 using TerraMours.Framework.Infrastructure.Redis;
+using k8s.KubeConfigModels;
+using TerraMours_Gpt.Domains.GptDomain.Contracts.Res;
+using TerraMours_Gpt.Domains.LoginDomain.Contracts.Common;
 
 namespace TerraMours_Gpt.Domains.GptDomain.Services
 {
@@ -108,6 +111,10 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
         }
 
         public async Task<ApiResponse<bool>> ChangeAlipayOptions(AlipayOptions alipayOptions, long? userId) {
+            if (!await AuthCheck(userId))
+            {
+                return ApiResponse<bool>.Fail("用户权限不足");
+            }
             var settings = await _dbContext.SysSettings.FirstOrDefaultAsync();
             if (settings == null) {
                 return ApiResponse<bool>.Fail("未初始化数据");
@@ -119,5 +126,52 @@ namespace TerraMours_Gpt.Domains.GptDomain.Services
             return ApiResponse<bool>.Success(true);
         }
 
+        public async Task<ApiResponse<KeyOption[]>> GetKeyList(long? userId)
+        {
+            if (!await AuthCheck(userId))
+            {
+                return ApiResponse<KeyOption[]>.Fail("用户权限不足");
+            }
+            var settings = await _dbContext.GptOptions.FirstOrDefaultAsync();
+            if (settings == null)
+            {
+                return ApiResponse<KeyOption[]>.Fail("未初始化数据");
+            }
+            return ApiResponse<KeyOption[]>.Success(settings.OpenAIOptions.OpenAI.KeyList);
+        }
+
+        public async Task<ApiResponse<bool>> ChangKeyList(KeyOption[] keys, long? userId)
+        {
+            if (!await AuthCheck(userId))
+            {
+                return ApiResponse<bool>.Fail("用户权限不足");
+            }
+            var settings = await _dbContext.GptOptions.FirstOrDefaultAsync();
+            if (settings == null)
+            {
+                return ApiResponse<bool>.Fail("未初始化数据");
+            }
+            settings.ChangKeyList(keys, userId);
+            _dbContext.GptOptions.Update(settings);
+            await _dbContext.SaveChangesAsync();
+            //删除key池缓存
+            await _helper.RemoveAsync("GetKey");
+            return ApiResponse<bool>.Success(true);
+        }
+        /// <summary>
+        /// 管理员权限判断
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private async Task<bool> AuthCheck(long? userId)
+        {
+            var user = await _dbContext.SysUsers.AsNoTracking().FirstOrDefaultAsync(m => m.UserId == userId);
+            var currentRole = _dbContext.SysRoles.FirstOrDefault(m => m.RoleId == user.RoleId);
+            if (user == null || currentRole == null || currentRole.IsAdmin != true)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }
