@@ -6,7 +6,7 @@ TerraMoursGpt2 项目在 Apache License 2.0 许可下开源，同时包含以下
     + 多租户 SaaS 服务：除非获得 TerraMoursGpt2 的明确书面授权，否则不得使用 TerraMoursGpt2 的源码来运营多租户 SaaS 服务。
     + LOGO 及版权信息：在使用 TerraMoursGpt2 的过程中，不得移除或修改 TerraMoursGpt2 控制台内的 LOGO 或版权信息。
 
-  请通过电子邮件 TerraMoursGpt2@163.com 联系我们咨询许可事宜。
+  请通过电子邮件 TerraMoursGpt@163.com 联系我们咨询许可事宜。
 
 + 作为贡献者，你必须同意将你贡献的代码用于以下用途：
 
